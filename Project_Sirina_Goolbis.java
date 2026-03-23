@@ -1,47 +1,57 @@
-import java.util.Scanner;
+import java.util.*; 
+import java.io.*;   
 
 public class Project_Sirina_Goolbis {
-   public static void main(String[] args) {
-      Scanner keyboard = new Scanner(System.in);
-
-      System.out.print("Please enter the Policy Number: ");
-      String pNum = keyboard.nextLine();
-
-      System.out.print("Please enter the Provider Name: ");
-      String pName = keyboard.nextLine();
-
-      System.out.print("Please enter the Policyholder’s First Name: ");
-      String fName = keyboard.nextLine();
-
-      System.out.print("Please enter the Policyholder’s Last Name: ");
-      String lName = keyboard.nextLine();
-
-      System.out.print("Please enter the Policyholder’s Age: ");
-      int age = keyboard.nextInt();
-      keyboard.nextLine();
+   public static void main(String[] args) throws IOException { // Added throws
       
-      System.out.print("Please enter the Policyholder’s Smoking Status (smoker/non-smoker): ");
-      String status = keyboard.nextLine();
+      // 1. Open the file (Must match the exact name provided by instructor)
+      File file = new File("PolicyInformation.txt");
+      Scanner inputFile = new Scanner(file);
 
-      System.out.print("Please enter the Policyholder’s Height (in inches): ");
-      double height = keyboard.nextDouble();
+      // 2. Create the ArrayList to hold all policy objects
+      ArrayList<Policy> policyList = new ArrayList<>();
 
-      System.out.print("Please enter the Policyholder’s Weight (in pounds): ");
-      double weight = keyboard.nextDouble();
+      // 3. Loop through the file
+      while (inputFile.hasNext()) {
+         String pNum = inputFile.nextLine();
+         String pName = inputFile.nextLine();
+         String fName = inputFile.nextLine();
+         String lName = inputFile.nextLine();
+         int age = inputFile.nextInt();
+         inputFile.nextLine(); // Clear the buffer
+         String status = inputFile.nextLine();
+         double height = inputFile.nextDouble();
+         double weight = inputFile.nextDouble();
 
+         // Skip the blank line between policies if there is one
+         if (inputFile.hasNextLine()) {
+             inputFile.nextLine(); 
+             if (inputFile.hasNextLine()) inputFile.nextLine(); 
+         }
 
-      Policy policy = new Policy(pNum, pName, fName, lName, age, status, height, weight);
+         // Create the object and add it to the list
+         policyList.add(new Policy(pNum, pName, fName, lName, age, status, height, weight));
+      }
+      inputFile.close();
 
-      System.out.println("\nPolicy Number: " + policy.getPolicyNumber());
-      System.out.println("Provider Name: " + policy.getProviderName());
-      System.out.println("Policyholder’s First Name: " + policy.getFirstName());
-      System.out.println("Policyholder’s Last Name: " + policy.getLastName());
-      System.out.println("Policyholder’s Age: " + policy.getAge());
-      System.out.println("Policyholder’s Smoking Status: " + policy.getSmokingStatus());
-      
-      System.out.printf("Policyholder’s Height: %.1f inches\n", policy.getHeight());
-      System.out.printf("Policyholder’s Weight: %.1f pounds\n", policy.getWeight());
-      System.out.printf("Policyholder’s BMI: %.2f\n", policy.getBMI());
-      System.out.printf("Policy Price: $%.2f\n", policy.getPrice());
+      // 4. Track counts
+      int smokers = 0;
+      int nonSmokers = 0;
+
+      // 5. Use a for-each loop to display everything
+      for (Policy p : policyList) {
+         System.out.println("Policy Number: " + p.getPolicyNumber());
+         System.out.println("Provider Name: " + p.getProviderName());
+         System.out.println("Policyholder’s First Name: " + p.getFirstName());
+         // ... (Add the rest of your print statements here using p.get methods) ...
+         System.out.printf("Policy Price: $%.2f\n\n", p.getPrice());
+
+         if (p.getSmokingStatus().equalsIgnoreCase("smoker")) smokers++;
+         else nonSmokers++;
+      }
+
+      // 6. Final counts
+      System.out.println("The number of policies with a smoker is: " + smokers);
+      System.out.println("The number of policies with a non-smoker is: " + nonSmokers);
    }
 }
